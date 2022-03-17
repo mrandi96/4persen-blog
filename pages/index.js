@@ -55,7 +55,7 @@ export default function Home({ posts: initialPosts, quote }) {
       <Head />
       <main className={styles.main}>
         <h1 className={styles.title}>
-          <span className={styles['web-name']}>R7i </span>
+          <span className={styles['web-name']}>4% </span>
           Software Development Blog
         </h1>
         <Quotes text={quote.text} author={quote.author} />

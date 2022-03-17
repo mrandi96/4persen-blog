@@ -8,7 +8,6 @@ const getPosts = async () => {
   const postsRef = collection(db, 'posts');
   const q = query(postsRef, orderBy('createdAt', "desc"));
   const snapshot = await getDocs(q);
-  console.log(q);
   const data = [];
   snapshot.forEach((doc) => {
     const currentData = doc.data();
