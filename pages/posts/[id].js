@@ -17,7 +17,8 @@ export async function getStaticProps({ params }) {
     return {
       props: {
         data: { ...data, content }
-      }
+      },
+      revalidate: 7,
     }
   } catch (e) {
     console.error(e);
@@ -42,7 +43,7 @@ export async function getStaticPaths() {
 
   // We'll pre-render only these paths at build time.
   // { fallback: false } means other routes should 404.
-  return { paths, fallback: false }
+  return { paths,  fallback: false }
 }
 
 export default function PostPage({ data }) {
