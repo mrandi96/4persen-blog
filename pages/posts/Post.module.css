@@ -1,0 +1,19 @@
+.main-container {
+  padding: 0 220px;
+}
+
+.back-button {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.content p {
+  font-size: 20px;
+  line-height: 36px;
+}
+
+@media (max-width: 900px) {
+  .main-container {
+    padding: 0 30px;
+  }
+}
