@@ -1,0 +1,130 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+}
+
+.title-list {
+  min-height: 100vh;
+  padding: 20px;
+  width: 240px;
+}
+
+.collapse-list {
+  display: none;
+}
+
+.title-items-list {
+  flex: 1;
+  margin-top: 10px;
+  height: 55vh;
+  overflow-y: scroll;
+  border-bottom: 1px dotted;
+}
+
+.with-icon {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.ellipsis {
+  transform: rotate(90deg);
+  font-size: 25px;
+}
+
+.list-toggle {
+  cursor: pointer;
+  min-height: 100vh;
+  width: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding-left: 17px;
+  background-color: #0070f3;
+  color: white;
+}
+
+.title-list-item {
+  cursor: pointer;
+}
+
+.title-list-item:active,
+.title-list-item:focus,
+.title-list-item:hover {
+  color: #0070f3;
+}
+
+.main {
+  min-height: 100vh;
+  flex: 1;
+  padding: 10px;
+}
+
+.no-border-input {
+  border: none;
+  display: block;
+  padding: 10px;
+  width: auto;
+  cursor: text;
+  width: 100%;
+}
+
+.title-input {
+  font-size: 2.3rem;
+}
+
+.description-input {
+  font-size: 1.3rem;
+}
+
+.markdown-editor {
+  font-size: 1rem;
+  padding: 10px;
+  height: 400px;
+  width: 100%;
+  resize: vertical;
+  min-height: 100px;
+  max-height: 70vh;
+}
+
+.add-button {
+  cursor: pointer;
+  width: 100%;
+  height: 45px;
+  background-color: #0070f3;
+  color: white;
+  border: 1px solid transparent;
+  border-radius: 7px;
+}
+
+.add-button:disabled {
+  cursor: unset;
+  background-color: #888888;
+  color: white;
+}
+
+.save-button {
+  cursor: pointer;
+  width: 150px;
+  height: 45px;
+  background-color: #0070f3;
+  color: white;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  float: right;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 17px;
+}
+
+.save-button:active {
+  background-color: #0030f3;
+}
+
+.save-button:disabled {
+  cursor: unset;
+  background-color: #888888;
+  color: white;
+}

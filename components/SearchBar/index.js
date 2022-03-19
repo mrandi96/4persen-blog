@@ -11,6 +11,7 @@ export default function SearchBar ({ style: extStyle, onChange }) {
       type="text"
       name="q"
       placeholder="Search..."
+      autoComplete="off"
       aria-label="Search term" />
   </div>
 }

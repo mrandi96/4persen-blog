@@ -1,6 +1,5 @@
-import { getStorage, ref, getDownloadURL, listAll } from 'firebase/storage';
+import { getStorage, ref, getDownloadURL, uploadString } from 'firebase/storage';
 import firebaseApp from '../../../utility/firebase';
-
 
 // Create a reference to the file we want to download
 const storage = getStorage(firebaseApp);
@@ -41,8 +40,18 @@ async function getMarkdownByName(name) {
     });
 }
 
+async function uploadMarkdown(content, markdownText) {
+  const storageRef = ref(storage, `Markdown/${content}.md`);
+
+  // Raw string is the default if no format is provided
+  const snapshot = await uploadString(storageRef, markdownText)
+
+  return true;
+}
+
 export {
-  getMarkdownByName
+  getMarkdownByName,
+  uploadMarkdown
 }
 
 export default async function handler(req, res) {

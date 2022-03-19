@@ -7,6 +7,10 @@
   display: inline-block;
 }
 
+.back-button:hover {
+  color: #0070f3;
+}
+
 .content p {
   font-size: 20px;
   line-height: 36px;

@@ -1,5 +1,16 @@
 import firebaseApp from '../../../utility/firebase';
-import { getFirestore, collection, getDocs, query, orderBy } from 'firebase/firestore';
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  addDoc,
+  setDoc,
+  Timestamp,
+  doc
+} from 'firebase/firestore';
+import { uploadMarkdown } from '../markdowns';
 
 
 const db = getFirestore(firebaseApp);
@@ -18,12 +29,45 @@ const getPosts = async () => {
   return data;
 }
 
+async function createPost({ title, description, markdownText }) {
+  const ref = doc(collection(db, 'posts'));
+  const createdAt = Timestamp.now();
+  await setDoc(ref, {
+    title,
+    description,
+    content: ref.id,
+    createdAt,
+  });
+
+  await uploadMarkdown(ref.id, markdownText);
+
+  return {
+    id: ref.id,
+    title,
+    description,
+    content: ref.id,
+    createdAt,
+  };
+}
+
 export {
-  getPosts
+  getPosts,
+  createPost
 }
 
 export default async function handler(req, res) {
-  const data = await getPosts();
-  
-  return res.status(200).json(data);
+  switch (req.method) {
+    case 'GET':
+      const data = await getPosts();
+      
+      return res.status(200).json(data);
+    case 'POST':
+      const payload = req.body;
+      const id = await createPost(payload);
+
+      return res.status(201).json({ message: `Document with id ${id} created.`})
+    default:
+      return res.status(404).send('404');
+  }
+
 }

@@ -18,7 +18,7 @@ export async function getStaticProps() {
         posts,
         quote
       },
-      revalidate: 7,
+      revalidate: 1,
     }
   } catch (e) {
     console.error(e);

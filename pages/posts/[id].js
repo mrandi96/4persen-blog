@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
 import styles from './Post.module.css';
+
 import Markdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
-import { useRouter } from 'next/router';
+// import firebase from 'firebase';
+
 import { getPostById } from '../api/posts/[id]';
 import { getPosts } from '../api/posts';
 import { getMarkdownByName } from '../api/markdowns';
 import Head from '../../components/Head';
+import Link from 'next/link';
 
 export async function getStaticProps({ params }) {
   try {
@@ -18,7 +20,7 @@ export async function getStaticProps({ params }) {
       props: {
         data: { ...data, content }
       },
-      revalidate: 7,
+      revalidate: 1,
     }
   } catch (e) {
     console.error(e);
@@ -33,29 +35,23 @@ export async function getStaticProps({ params }) {
 }
 
 export async function getStaticPaths() {
-  // Call an external API endpoint to get posts
   const posts = await getPosts();
 
-  // Get the paths we want to pre-render based on posts
-  const paths = posts.map((post) => ({
-    params: { id: post.id },
+  const paths = posts.map(({ id }) => ({
+    params: { id },
   }))
 
-  // We'll pre-render only these paths at build time.
-  // { fallback: false } means other routes should 404.
   return { paths,  fallback: 'blocking' }
 }
 
 export default function PostPage({ data }) {
-  const router = useRouter();
-  const goBackHandler = () => {
-    router.back();
-  }
 
   return (
     <div className={styles['main-container']}>
-      <Head title={data.title} />
-      <h1><span className={styles['back-button']} onClick={goBackHandler}>&larr;</span> {data.title}</h1>
+      <Head title={`Blog - ${data.title}`} />
+      <Link href="/">
+        <h1><span className={styles['back-button']}>&larr;</span> {data.title}</h1>
+      </Link>
       <h5>{data.createdAt ? `Posted @${data.createdAt}` : ''} {data.readTime ? "| " + data.readTime + ' read' : ''}</h5>
       <Markdown className={styles.content} remarkPlugins={[remarkBreaks, remarkGfm]}>
         {data.content}
