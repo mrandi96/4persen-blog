@@ -1,4 +1,4 @@
-import firebaseApp from '../../../utility/firebase';
+import firebaseApp from 'utility/firebase';
 import { doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
 import { uploadMarkdown } from '../markdowns';
 

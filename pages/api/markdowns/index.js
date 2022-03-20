@@ -1,5 +1,5 @@
 import { getStorage, ref, getDownloadURL, uploadString } from 'firebase/storage';
-import firebaseApp from '../../../utility/firebase';
+import firebaseApp from 'utility/firebase';
 
 // Create a reference to the file we want to download
 const storage = getStorage(firebaseApp);

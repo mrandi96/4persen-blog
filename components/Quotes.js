@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import styles from './Quotes.module.css';
+import styles from 'styles/Quotes.module.css';
 
 export default function Quotes ({ text = 'Quote of the day', author = 'Author of the day' }) {
   return (

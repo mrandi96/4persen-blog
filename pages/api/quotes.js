@@ -1,5 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-
 async function getOneRandomQuote() {
   const response = await fetch('https://type.fit/api/quotes');
   const data = await response.json();

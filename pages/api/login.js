@@ -1,4 +1,4 @@
-import firebaseApp from '../../utility/firebase';
+import firebaseApp from 'utility/firebase';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 export default async function handler(req, res) {

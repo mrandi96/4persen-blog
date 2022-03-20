@@ -1,4 +1,4 @@
-import styles from './Spinner.module.css';
+import styles from 'styles/Spinner.module.css';
 
 export default function Spinner({ show = true }) {
   return (

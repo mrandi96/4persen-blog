@@ -1,10 +1,11 @@
+import styles from 'styles/HomePage.module.css'
+
 import { useState, useRef } from 'react';
-import Head from '../components/Head';
-import styles from '../styles/Home.module.css'
-import SearchBar from '../components/SearchBar';
-import Footer from '../components/Footer';
-import Quotes from '../components/Quotes';
-import PostsCard from '../components/PostsCard';
+import Head from 'components/Head';
+import SearchBar from 'components/SearchBar';
+import Footer from 'components/Footer';
+import Quotes from 'components/Quotes';
+import PostsCard from 'components/PostsCard';
 import { getPosts } from './api/posts';
 import { getOneRandomQuote } from './api/quotes';
 
@@ -30,7 +31,7 @@ export async function getStaticProps() {
   }
 }
 
-export default function Home({ posts: initialPosts, quote }) {
+export default function HomePage({ posts: initialPosts, quote }) {
   const [posts, setPosts] = useState(initialPosts);
   const searchRef = useRef();
   let debounce;

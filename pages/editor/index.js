@@ -1,24 +1,21 @@
-import styles from './Editor.module.css';
-import icons from '../../styles/Icons.module.css';
+import styles from 'styles/EditorPage.module.css';
+import icons from 'styles/Icons.module.css';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import useSWR from 'swr';
 import Router from 'next/router';
+import useSWR from 'swr';
 import Cookies from 'cookies';
 
-import Head from '../../components/Head';
-import fetcher from '../../utility/fetcher';
-import Spinner from '../../components/Spinner';
+import Head from 'components/Head';
+import Spinner from 'components/Spinner';
+import fetcher from 'utility/fetcher';
 
 export async function getServerSideProps({ req, res }) {
   const cookies = new Cookies(req, res);
   let token = JSON.parse(decodeURIComponent(cookies.get('token')));
   if (!token) return {
-    redirect: {
-      permanent: false,
-      destination: '/',
-    },
+    notFound: true,
   }
 
   return {

@@ -1,15 +1,14 @@
-import styles from './Post.module.css';
+import styles from 'styles/PostsPage.module.css';
 
 import Markdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
-// import firebase from 'firebase';
 
+import Link from 'next/link';
+import Head from 'components/Head';
 import { getPostById } from '../api/posts/[id]';
 import { getPosts } from '../api/posts';
 import { getMarkdownByName } from '../api/markdowns';
-import Head from '../../components/Head';
-import Link from 'next/link';
 
 export async function getStaticProps({ params }) {
   try {

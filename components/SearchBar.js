@@ -1,6 +1,5 @@
-import React from 'react';
-import styles from './SearchBar.module.css';
-import icons from '../../styles/Icons.module.css';
+import styles from 'styles/SearchBar.module.css';
+import icons from 'styles/Icons.module.css';
 
 export default function SearchBar ({ style: extStyle, onChange, value, searchRef }) {
   return <div className={styles.container} style={{ ...extStyle }}>

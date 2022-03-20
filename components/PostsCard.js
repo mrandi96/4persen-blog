@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import styles from './PostsCard.module.css';
+import styles from 'styles/PostsCard.module.css';
 
 export default function PostsCard ({ title, description, url, onClick }) {
   return <div className={styles.card}>

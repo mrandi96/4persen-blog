@@ -1,5 +1,5 @@
-import styles from './Login.module.css';
-import icons from '../../../styles/Icons.module.css';
+import styles from 'styles/LoginPage.module.css';
+import icons from 'styles/Icons.module.css';
 
 import { useState } from 'react';
 import cookieCutter from 'cookie-cutter';

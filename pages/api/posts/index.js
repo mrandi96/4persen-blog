@@ -1,4 +1,4 @@
-import firebaseApp from '../../../utility/firebase';
+import firebaseApp from 'utility/firebase';
 import {
   getFirestore,
   collection,
