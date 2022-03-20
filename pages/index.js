@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Head from '../components/Head';
 import styles from '../styles/Home.module.css'
 import SearchBar from '../components/SearchBar';
@@ -32,6 +32,7 @@ export async function getStaticProps() {
 
 export default function Home({ posts: initialPosts, quote }) {
   const [posts, setPosts] = useState(initialPosts);
+  const searchRef = useRef();
   let debounce;
 
   const fetchDataOnChange = (e) => {
@@ -39,15 +40,25 @@ export default function Home({ posts: initialPosts, quote }) {
     debounce = setTimeout(() => {
       const text = String(e.target.value).toLowerCase();
       if (text) {
-        const filteredPosts = initialPosts.filter(({ title, description }) => {
-          return String(title).toLowerCase().includes(text) || String(description).toLowerCase().includes(text);
-        });
-
-        setPosts(filteredPosts);
+        filterPosts(text);
       } else {
         setPosts(initialPosts);
       }
     }, 300);
+  }
+
+  const filterPosts = (text) => {
+    const filteredPosts = initialPosts.filter(({ title, description }) => {
+      let query = String(text).toLowerCase();
+      return String(title).toLowerCase().includes(query) || String(description).toLowerCase().includes(query);
+    });
+
+    setPosts(filteredPosts);
+  }
+
+  const clickTagsHandler = (value) => {
+    searchRef.current.value = value;
+    filterPosts(value);
   }
 
   return (
@@ -59,11 +70,11 @@ export default function Home({ posts: initialPosts, quote }) {
           Software Development Blog
         </h1>
         <Quotes text={quote.text} author={quote.author} />
-        <SearchBar onChange={fetchDataOnChange} style={{ margin: '20px 0' }} />
+        <SearchBar searchRef={searchRef} onChange={fetchDataOnChange} style={{ margin: '20px 0' }} />
 
         <div className={styles.grid}>
           {posts.length ? posts.map((item) => {
-            return <PostsCard key={item.id} title={item.title} description={item.description} url={item.url || `/posts/${item.id}`} />
+            return <PostsCard key={item.id} title={item.title} onClick={clickTagsHandler} description={item.description} url={item.url || `/posts/${item.id}`} />
           }) : <h1>There is nothing here.</h1>}
         </div>
       </main>

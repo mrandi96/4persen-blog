@@ -1,14 +1,17 @@
 import Link from 'next/link';
 import styles from './PostsCard.module.css';
 
-export default function PostsCard ({ title, description, url }) {
-  return <Link href={url}>
-    <a
-      className={styles.card}
-    >
-      <h2>{title} &rarr;</h2>
-      <p>{description}</p>
-    </a>
-  </Link>
+export default function PostsCard ({ title, description, url, onClick }) {
+  return <div className={styles.card}>
+    <Link href={url}>
+      <a>
+        <h2 className={styles['title']}>{title} &rarr;</h2>
+      </a>
+    </Link>
+    <hr />
+    {description.split(';').map((item) => (
+      <div onClick={() => onClick(String(item).trim())} className={styles['tags']} key={item}>#{String(item).trim()}</div>
+    ))}
+  </div>
 }
 

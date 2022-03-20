@@ -11,6 +11,15 @@ a {
   text-decoration: none;
 }
 
+p a {
+  color: #0070f3;
+}
+
+p a:hover {
+  color: royalblue;
+  text-decoration: underline;
+}
+
 pre {
   border-radius: 5px;
   background: #3c3c3c;

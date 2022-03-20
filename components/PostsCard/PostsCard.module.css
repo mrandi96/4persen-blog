@@ -10,6 +10,7 @@
   transition: color 0.15s ease, border-color 0.15s ease;
 }
 
+.title:hover,
 .card:hover,
 .card:focus,
 .card:active {
@@ -26,6 +27,21 @@
   margin: 0;
   font-size: 1.25rem;
   line-height: 1.5;
+}
+
+.tags {
+  cursor: pointer;
+  display: inline-block;
+  background-color: #0070f3;
+  color: white;
+  border: 1px transparent;
+  border-radius: 3px;
+  padding: 5px;
+  margin: 2px 5px;
+}
+
+.tags:hover {
+  background-color: royalblue;
 }
 
 @media (max-width: 600px) {
