@@ -16,6 +16,10 @@
   line-height: 36px;
 }
 
+.date {
+  color: rgba(0, 0, 0, 0.6);
+}
+
 @media (max-width: 900px) {
   .main-container {
     padding: 0 30px;

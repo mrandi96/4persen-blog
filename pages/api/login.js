@@ -1,4 +1,4 @@
-import firebaseApp from 'utility/firebase';
+import { app as firebaseApp } from 'utility/firebase';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 export default async function handler(req, res) {
@@ -16,14 +16,12 @@ export default async function handler(req, res) {
         statusCode = 401;
         break;
       case 'auth/too-many-requests':
-        statusCode = 429;
-        res.writeHead(429, { Location: '/' });
+        return res.writeHead(429, { Location: '/' });
       default:
         statusCode = 500;
         break;
     }
 
-    // return res.status(errorCode || 500).json({ message: errorMessage })
     return res.status(statusCode).json({ message: e.message || 'Internal server error' })
   }
 }

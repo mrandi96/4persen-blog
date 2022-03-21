@@ -10,17 +10,24 @@ import Cookies from 'cookies';
 import Head from 'components/Head';
 import Spinner from 'components/Spinner';
 import fetcher from 'utility/fetcher';
+import { verifyToken } from '../api/verify-token';
 
 export async function getServerSideProps({ req, res }) {
   try {
     const cookies = new Cookies(req, res);
     let token = JSON.parse(decodeURIComponent(cookies.get('token')));
-    if (!token) return {
+    const idToken = token?._tokenResponse?.idToken;
+
+    const { cred, failed } = await verifyToken(idToken);
+
+    if (failed) return {
       notFound: true,
     }
 
     return {
-      props: {}
+      props: {
+        cred
+      }
     }
   } catch (e) {
     console.error(e);
@@ -31,7 +38,7 @@ export async function getServerSideProps({ req, res }) {
   }
 }
 
-export default function EditorPage() {
+export default function EditorPage({ cred }) {
   const { data, error } = useSWR('/api/posts', fetcher);
 
   const [documentId, setDocumentId] = useState(null);
@@ -132,6 +139,7 @@ export default function EditorPage() {
             ) || <p>There is nothing here.</p>
           }
         </div>
+        <p>Logged in as <span style={{ color: '#0070f3', fontWeight: 'bold' }}>{cred?.email}</span></p>
       </div>
       <div onClick={toggleListHandler} className={styles['list-toggle']}><span className={styles.ellipsis}>&hellip;</span></div>
       <div className={styles.main}>

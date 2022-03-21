@@ -1,50 +1,24 @@
-import { getStorage, ref, getDownloadURL, uploadString } from 'firebase/storage';
-import firebaseApp from 'utility/firebase';
+import { admin } from 'utility/firebase';
 
-// Create a reference to the file we want to download
-const storage = getStorage(firebaseApp);
+const bucket = admin.storage().bucket(process.env.FS_BUCKET);
 
 async function getMarkdownByName(name) {
-  const mdRef = ref(storage, `Markdown/${name}.md`);
+  const signedUrl = await bucket.file(`Markdown/${name}.md`).getSignedUrl({
+    action: 'read',
+    expires: new Date(new Date().setDate(new Date().getDate() + 1))
+  });
 
-  // Get the download URL
-  // listAll(mdRef)
-  return getDownloadURL(mdRef)
-    .then(async (url) => {
-      // Insert url into an <img> tag to 'download'
-      const response = await fetch(url);
-      const content =  await response.text();
-      return content;
-    })
-    .catch((error) => {
-      console.error(error);
-      // A full list of error codes is available at
-      // https://firebase.google.com/docs/storage/web/handle-errors
-      switch (error.code) {
-        case 'storage/object-not-found':
-          // File doesn't exist
-          return '';
-        case 'storage/unauthorized':
-          // User doesn't have permission to access the object
-          break;
-        case 'storage/canceled':
-          // User canceled the upload
-          break;
+  const response = await fetch(signedUrl);
+  const content = await response.text();
 
-        // ...
-
-        case 'storage/unknown':
-          // Unknown error occurred, inspect the server response
-          break;
-      }
-    });
+  return content;
 }
 
 async function uploadMarkdown(content, markdownText) {
-  const storageRef = ref(storage, `Markdown/${content}.md`);
-
-  // Raw string is the default if no format is provided
-  const snapshot = await uploadString(storageRef, markdownText)
+  const file = bucket.file(`Markdown/${content}.md`);
+  file.save(markdownText, {
+    contentType: 'text/plain'
+  });
 
   return true;
 }

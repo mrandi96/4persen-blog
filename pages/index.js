@@ -25,7 +25,8 @@ export async function getStaticProps() {
     console.error(e);
     return {
       props: {
-        posts: []
+        posts: [],
+        quote: {}
       }
     }
   }
@@ -33,6 +34,7 @@ export async function getStaticProps() {
 
 export default function HomePage({ posts: initialPosts, quote }) {
   const [posts, setPosts] = useState(initialPosts);
+  const [showClear, setShowClear] = useState(false);
   const searchRef = useRef();
   let debounce;
 
@@ -41,8 +43,10 @@ export default function HomePage({ posts: initialPosts, quote }) {
     debounce = setTimeout(() => {
       const text = String(e.target.value).toLowerCase();
       if (text) {
+        setShowClear(true);
         filterPosts(text);
       } else {
+        setShowClear(false);
         setPosts(initialPosts);
       }
     }, 300);
@@ -58,8 +62,15 @@ export default function HomePage({ posts: initialPosts, quote }) {
   }
 
   const clickTagsHandler = (value) => {
+    setShowClear(true);
     searchRef.current.value = value;
     filterPosts(value);
+  }
+
+  const clearSearch = () => {
+    setShowClear(false);
+    searchRef.current.value = '';
+    filterPosts('');
   }
 
   return (
@@ -70,8 +81,8 @@ export default function HomePage({ posts: initialPosts, quote }) {
           <span className={styles['web-name']}>4% </span>
           Software Development Blog
         </h1>
-        <Quotes text={quote.text} author={quote.author} />
-        <SearchBar searchRef={searchRef} onChange={fetchDataOnChange} style={{ margin: '20px 0' }} />
+        <Quotes text={quote?.text} author={quote?.author} />
+        <SearchBar searchRef={searchRef} onChange={fetchDataOnChange} style={{ margin: '20px 0' }} showClear={showClear} clearSearch={clearSearch} />
 
         <div className={styles.grid}>
           {posts.length ? posts.map((item) => {

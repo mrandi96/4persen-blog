@@ -1,25 +1,35 @@
-import firebaseApp from 'utility/firebase';
-import { doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
+import moment from 'moment';
+import { admin } from 'utility/firebase';
 import { uploadMarkdown } from '../markdowns';
 
-const db = getFirestore(firebaseApp);
+// const db = getFirestore(firebaseApp);
+const db = admin.firestore();
 
 async function getPostById(id) {
-  const snapshot = await getDoc(doc(db, 'posts', id));
-  if (snapshot.exists()) {
+  // const snapshot = await getDoc(doc(db, 'posts', id));
+  const snapshot = await db.collection('posts').doc(id).get();
+  if (snapshot.exists) {
     const data = snapshot.data();
-    const createdAt = data.createdAt.seconds ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('en-GB') : null;
+    const createdAt = data.createdAt.seconds ? moment(new Date(data.createdAt.seconds * 1000)).format('DD MMMM YYYY') : null;
 
     return { ...data, createdAt };
   }
 
-  return null;
+  const e = new Error('data not found');
+  e.status = 404;
+  throw e;
 }
 
 async function updatePost(id, { markdownText, ...payload }) {
-  const postRef = doc(db, 'posts', id);
-  await updateDoc(postRef, payload);
+  // const postRef = doc(db, 'posts', id);
+  // await updateDoc(postRef, payload);
+  // await uploadMarkdown(id, markdownText);
+
+  const postRef = db.collection('posts').doc(id)
+  const res = await postRef.update(payload);
   await uploadMarkdown(id, markdownText);
+
+  return res;
 }
 
 export {

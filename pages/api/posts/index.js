@@ -1,24 +1,28 @@
-import firebaseApp from 'utility/firebase';
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  addDoc,
-  setDoc,
-  Timestamp,
-  doc
-} from 'firebase/firestore';
+import { admin } from 'utility/firebase';
+// import {
+//   getFirestore,
+//   collection,
+//   getDocs,
+//   query,
+//   orderBy,
+//   addDoc,
+//   setDoc,
+//   Timestamp,
+//   doc
+// } from 'firebase/firestore';
 import { uploadMarkdown } from '../markdowns';
 
 
-const db = getFirestore(firebaseApp);
+// const db = getFirestore(firebaseApp);
+const db = admin.firestore();
 
 const getPosts = async () => {
-  const postsRef = collection(db, 'posts');
-  const q = query(postsRef, orderBy('createdAt', "desc"));
-  const snapshot = await getDocs(q);
+  const postsRef = db.collection('posts');
+  const snapshot = await postsRef.orderBy('createdAt', 'desc').get();
+
+  // const postsRef = collection(db, 'posts');
+  // const q = query(postsRef, orderBy('createdAt', "desc"));
+  // const snapshot = await getDocs(q);
   const data = [];
   snapshot.forEach((doc) => {
     const currentData = doc.data();
@@ -30,8 +34,11 @@ const getPosts = async () => {
 }
 
 async function createPost({ title, description, markdownText }) {
-  const ref = doc(collection(db, 'posts'));
-  const createdAt = Timestamp.now();
+  const ref = db.collection('posts').doc();
+  const createdAt = admin.firestore.Timestamp.now();
+
+  // const ref = doc(collection(db, 'posts'));
+  // const createdAt = Timestamp.now();
   await setDoc(ref, {
     title,
     description,

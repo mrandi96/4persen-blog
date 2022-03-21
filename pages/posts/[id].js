@@ -22,13 +22,9 @@ export async function getStaticProps({ params }) {
       revalidate: 1,
     }
   } catch (e) {
-    console.error(e);
+    if (e.status !== 404) throw e;
     return {
-      props: {
-        data: {
-          title: '404 Not Found'
-        }
-      }
+      notFound: true,
     }
   }
 }
@@ -51,7 +47,7 @@ export default function PostPage({ data }) {
       <Link href="/">
         <h1><span className={styles['back-button']}>&larr;</span> {data.title}</h1>
       </Link>
-      <h5>{data.createdAt ? `Posted @${data.createdAt}` : ''} {data.readTime ? "| " + data.readTime + ' read' : ''}</h5>
+      <h3 className={styles.date}>{data.createdAt ? `${data.createdAt}` : ''}</h3>
       <Markdown className={styles.content} remarkPlugins={[remarkBreaks, remarkGfm]}>
         {data.content}
       </Markdown>
