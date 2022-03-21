@@ -30,9 +30,16 @@
   border: 2px solid #0070f3;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 630px) {
   .search, .container {
-    width: 1000px;
+    width: 630px;
+    height: 53px;
+  }
+}
+
+@media (min-width: 920px) {
+  .search, .container {
+    width: 900px;
     height: 67px;
   }
 }
