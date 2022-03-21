@@ -12,18 +12,26 @@ import Spinner from 'components/Spinner';
 import fetcher from 'utility/fetcher';
 
 export async function getServerSideProps({ req, res }) {
-  const cookies = new Cookies(req, res);
-  let token = JSON.parse(decodeURIComponent(cookies.get('token')));
-  if (!token) return {
-    notFound: true,
-  }
+  try {
+    const cookies = new Cookies(req, res);
+    let token = JSON.parse(decodeURIComponent(cookies.get('token')));
+    if (!token) return {
+      notFound: true,
+    }
 
-  return {
-    props: {}
+    return {
+      props: {}
+    }
+  } catch (e) {
+    console.error(e);
+
+    return {
+      notFound: true,
+    }
   }
 }
 
-export default function Editor() {
+export default function EditorPage() {
   const { data, error } = useSWR('/api/posts', fetcher);
 
   const [documentId, setDocumentId] = useState(null);
