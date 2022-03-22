@@ -75,9 +75,9 @@ export default async function handler(req, res) {
     case 'POST':
       try {
         const payload = req.body;
-        const id = await createPost(payload);
+        const data = await createPost(payload);
 
-        return res.status(201).json({ message: `Document with id ${id} created.`});
+        return res.status(201).json(data);
       } catch (e) {
         console.error(e);
 

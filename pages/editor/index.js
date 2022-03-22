@@ -120,33 +120,52 @@ export default function EditorPage({ cred }) {
     emptyLocalStorage();
   }
 
-  const publishPostHandler = async (id, publishedAt) => {
+  const togglePublishPostHandler = async () => {
     setDisablePublish(true);
-    setShowSpinner(true);
     setShowPublishSpinner(true);
 
-    const response = await fetch(id ? `api/posts/${id}` : 'api/posts', {
-      method: id ? 'PUT' : 'POST',
+    const response = await fetch(`api/posts/${documentId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        markdownText,
+        publishedAt: !publishToggle
+      })
+    });
+
+    setIsEdited(false);
+    setDisablePublish(false);
+    setPublishToggle(!publishToggle);
+    setShowPublishSpinner(false);
+    emptyLocalStorage();
+    Router.reload();
+  }
+
+  const createOrUpdatePostHandler = async () => {
+    setShowSpinner(true);
+
+    const response = await fetch(documentId ? `api/posts/${documentId}` : 'api/posts', {
+      method: documentId ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         title,
         description,
         markdownText,
-        publishedAt
+        publishedAt: publishToggle
       })
     });
 
+    if (typeof response.json === 'function' && !documentId) {
+      const { id } = await response.json();
+      window.open(`/posts/${id}`);
+    }
     // if (response.status === 201) {
 
     // }
 
-    setDisablePublish(false);
-    setPublishToggle(publishedAt);
     setIsEdited(false);
     setShowSpinner(false);
-    setShowPublishSpinner(false);
     emptyLocalStorage();
-    if (!id || publishedAt !== undefined) Router.reload();
   }
 
   useEffect(() => {
@@ -160,13 +179,15 @@ export default function EditorPage({ cred }) {
   }, []);
 
   const createIsDisabled = !(title || description || markdownText && !showSpinner);
-  const publishIsDisabled = !(title && description && markdownText && isEdited && !showSpinner);
+  const saveIsDisabled = !(title && description && markdownText && isEdited && !showSpinner);
 
   return (
     <div className={styles.container}>
       <Head title="4Persen Posts Editor" />
       <div className={`${styles['title-list']} ${showList && styles['collapse-list']}`}>
-        <Link href="/"><a className={styles['with-icon']}><span style={{ marginRight: 7 }} className={icons['gg-home-alt']} />Home</a></Link>
+        <Link href="/">
+          <a className={styles['with-icon']}><span style={{ marginRight: 7 }} className={icons['gg-home-alt']} />Home</a>
+        </Link>
         <h2>Published Posts </h2>
         <hr />
         <button disabled={createIsDisabled} onClick={createNewPostHandler} className={`${styles['add-button']} ${styles['with-icon']}`}>
@@ -179,7 +200,9 @@ export default function EditorPage({ cred }) {
             data?.map(
               (item) => <div onClick={() => clickTitleHandler(item)} key={item.id} className={`${styles['title-list-item']} ${!item.publishedAt && styles['draft-item']}`}>
                 <p>{item.title}</p>
-                <span style={{ display: item.publishedAt && 'none' }} className={`${icons['gg-file-document']} ${styles['draft-icon']}`} />
+                <div>
+                  <span style={{ display: item.publishedAt && 'none' }} className={`${icons['gg-file-document']} ${styles['draft-icon']}`} />
+                </div>
               </div>
             ) || <p>There is nothing here.</p>
           }
@@ -192,16 +215,16 @@ export default function EditorPage({ cred }) {
         <input placeholder="No description" className={`${styles['no-border-input']} ${styles['description-input']}`} name="description" onChange={inputDescriptionHandler} value={description} />
         <textarea className={styles['markdown-editor']} name="markdownText" onChange={markdownTextHandler} value={markdownText} />
         <button
-          onClick={() => publishPostHandler(documentId)}
-          disabled={publishIsDisabled}
+          onClick={() => createOrUpdatePostHandler()}
+          disabled={saveIsDisabled}
           className={styles['save-button']}>
             <Spinner show={showSpinner} />
             {isUpdate ? 'Update' : 'Save'}
         </button>
         <button
           disabled={disablePublish}
-          onClick={() => publishPostHandler(documentId, !publishToggle)}
-          style={{ marginRight: 10 }}
+          onClick={() => togglePublishPostHandler()}
+          style={{ marginRight: 10, display: !documentId && 'none' }}
           className={styles['save-button']}>
             <Spinner show={showPublishSpinner} />
             {publishToggle ? 'Unpublish' : 'Publish'}
