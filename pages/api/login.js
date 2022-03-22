@@ -10,7 +10,6 @@ export default async function handler(req, res) {
     return res.status(200).json(userCredential);
   } catch (e) {
     let statusCode;
-    console.log(e.code);
     switch (e.code) {
       case 'auth/wrong-password':
         statusCode = 401;

@@ -16,11 +16,8 @@ export default function SearchBar ({ style: extStyle, onChange, value, searchRef
       aria-label="Search term" />
     <span
       onClick={clearSearch}
-      className={icons['gg-close']}
+      className={`${icons['gg-close']} ${styles.close}`}
       style={{
-        marginLeft: 3,
-        marginRight: 10,
-        cursor: 'pointer',
         display: !showClear && 'none',
       }} />
   </div>

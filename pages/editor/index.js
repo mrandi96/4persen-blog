@@ -1,7 +1,7 @@
 import styles from 'styles/EditorPage.module.css';
 import icons from 'styles/Icons.module.css';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Router from 'next/router';
 import useSWR from 'swr';
@@ -15,7 +15,10 @@ import { verifyToken } from '../api/verify-token';
 export async function getServerSideProps({ req, res }) {
   try {
     const cookies = new Cookies(req, res);
-    let token = JSON.parse(decodeURIComponent(cookies.get('token')));
+    const encodedUriToken = cookies.get('token');
+    const decodedUriToken = decodeURIComponent(encodedUriToken);
+    const token = JSON.parse(decodedUriToken);
+
     const idToken = token?._tokenResponse?.idToken;
 
     const { cred, failed } = await verifyToken(idToken);
@@ -49,62 +52,87 @@ export default function EditorPage({ cred }) {
   const [isUpdate, setIsUpdate] = useState(false);
   const [isEdited, setIsEdited] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
+  const [publishToggle, setPublishToggle] = useState(false);
+  const [disablePublish, setDisablePublish] = useState(true);
+  const [showPublishSpinner, setShowPublishSpinner] = useState(false);
 
   const inputTitleHandler = (e) => {
     const input = e.target.value;
     setIsEdited(true);
     setTitle(input);
+    if (window !== undefined) {
+      localStorage.setItem('@title', input);
+    }
   }
 
   const inputDescriptionHandler = (e) => {
     const input = e.target.value;
     setIsEdited(true);
     setDescription(input);
+    if (window !== undefined) {
+      localStorage.setItem('@description', input);
+    }
   }
 
   const markdownTextHandler = (e) => {
     const input = e.target.value;
     setIsEdited(true);
     setMarkdownText(input);
+    if (window !== undefined) {
+      localStorage.setItem('@markdownText', input);
+    }
   }
 
   const toggleListHandler = () => {
     setShowList(!showList);
   }
 
-  const clickTitleHandler = async (id) => {
+  const clickTitleHandler = async (data) => {
+    setDisablePublish(false);
     setIsEdited(false);
     setIsUpdate(true);
-    setDocumentId(id);
-    const data = await fetcher(`api/posts/${id}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    });
+    setDocumentId(data.id);
     const markdownResponse = await fetch(`api/markdowns?name=${data.content}`);
     const markdown = await markdownResponse.text();
 
     setTitle(data?.title);
     setDescription(data?.description);
     setMarkdownText(markdown);
+    setPublishToggle(!!data?.publishedAt);
+  }
+
+  const emptyLocalStorage = () => {
+    if (window !== undefined) {
+      localStorage.setItem('@title', '');
+      localStorage.setItem('@description', '');
+      localStorage.setItem('@markdownText', '');
+    }
   }
 
   const createNewPostHandler = () => {
+    setDisablePublish(true);
+    setPublishToggle(false);
     setDocumentId(null);
     setTitle('');
     setDescription('');
     setMarkdownText('');
     setIsUpdate(false);
+    emptyLocalStorage();
   }
 
-  const publishPostHandler = async (id) => {
+  const publishPostHandler = async (id, publishedAt) => {
+    setDisablePublish(true);
     setShowSpinner(true);
+    setShowPublishSpinner(true);
+
     const response = await fetch(id ? `api/posts/${id}` : 'api/posts', {
       method: id ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         title,
         description,
-        markdownText
+        markdownText,
+        publishedAt
       })
     });
 
@@ -112,10 +140,24 @@ export default function EditorPage({ cred }) {
 
     // }
 
+    setDisablePublish(false);
+    setPublishToggle(publishedAt);
     setIsEdited(false);
     setShowSpinner(false);
-    if (!id) Router.reload();
+    setShowPublishSpinner(false);
+    emptyLocalStorage();
+    if (!id || publishedAt !== undefined) Router.reload();
   }
+
+  useEffect(() => {
+    const title = localStorage.getItem('@title');
+    const description = localStorage.getItem('@description');
+    const markdownText = localStorage.getItem('@markdownText');
+
+    setTitle(title);
+    setDescription(description);
+    setMarkdownText(markdownText);
+  }, []);
 
   const createIsDisabled = !(title || description || markdownText && !showSpinner);
   const publishIsDisabled = !(title && description && markdownText && isEdited && !showSpinner);
@@ -135,7 +177,10 @@ export default function EditorPage({ cred }) {
             error ?
             <p>Failed to load list</p> :
             data?.map(
-              (item) => <p key={item.id} onClick={() => clickTitleHandler(item.id)} className={styles['title-list-item']}>{item.title}</p>
+              (item) => <div onClick={() => clickTitleHandler(item)} key={item.id} className={`${styles['title-list-item']} ${!item.publishedAt && styles['draft-item']}`}>
+                <p>{item.title}</p>
+                <span style={{ display: item.publishedAt && 'none' }} className={`${icons['gg-file-document']} ${styles['draft-icon']}`} />
+              </div>
             ) || <p>There is nothing here.</p>
           }
         </div>
@@ -151,8 +196,17 @@ export default function EditorPage({ cred }) {
           disabled={publishIsDisabled}
           className={styles['save-button']}>
             <Spinner show={showSpinner} />
-            {isUpdate ? 'Update' : 'Publish'}
+            {isUpdate ? 'Update' : 'Save'}
         </button>
+        <button
+          disabled={disablePublish}
+          onClick={() => publishPostHandler(documentId, !publishToggle)}
+          style={{ marginRight: 10 }}
+          className={styles['save-button']}>
+            <Spinner show={showPublishSpinner} />
+            {publishToggle ? 'Unpublish' : 'Publish'}
+        </button>
+
       </div>
     </div>
   )

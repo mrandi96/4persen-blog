@@ -39,8 +39,6 @@ export default function LoginPage() {
       cookieCutter.set('token', JSON.stringify(data));
       window.location.href = '/editor';
     }
-
-    console.log(data);
   }
 
   return <div className={styles.container}>

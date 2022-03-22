@@ -11,7 +11,7 @@ import { getOneRandomQuote } from './api/quotes';
 
 export async function getStaticProps() {
   try {
-    const posts = await getPosts();
+    const posts = await getPosts(true);
     const quote = await getOneRandomQuote();
 
     return {

@@ -47,6 +47,14 @@
 
 .title-list-item {
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+}
+
+.draft-item {
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .title-list-item:active,

@@ -2,17 +2,16 @@ import moment from 'moment';
 import { admin } from 'utility/firebase';
 import { uploadMarkdown } from '../markdowns';
 
-// const db = getFirestore(firebaseApp);
 const db = admin.firestore();
 
 async function getPostById(id) {
-  // const snapshot = await getDoc(doc(db, 'posts', id));
   const snapshot = await db.collection('posts').doc(id).get();
   if (snapshot.exists) {
     const data = snapshot.data();
-    const createdAt = data.createdAt.seconds ? moment(new Date(data.createdAt.seconds * 1000)).format('DD MMMM YYYY') : null;
+    const createdAt = data.createdAt?.seconds ? moment(new Date(data.createdAt.seconds * 1000)).format('DD MMMM YYYY') : null;
+    const publishedAt = data.publishedAt?.seconds ? moment(new Date(data.publishedAt.seconds * 1000)).format('DD MMMM YYYY') : null;
 
-    return { ...data, createdAt };
+    return { ...data, createdAt, publishedAt };
   }
 
   const e = new Error('data not found');
@@ -20,13 +19,12 @@ async function getPostById(id) {
   throw e;
 }
 
-async function updatePost(id, { markdownText, ...payload }) {
-  // const postRef = doc(db, 'posts', id);
-  // await updateDoc(postRef, payload);
-  // await uploadMarkdown(id, markdownText);
-
+async function updatePost(id, { markdownText, publishedAt, ...payload }) {
   const postRef = db.collection('posts').doc(id)
-  const res = await postRef.update(payload);
+  const res = await postRef.update({
+    ...payload,
+    publishedAt: publishedAt ? admin.firestore.Timestamp.now() : null
+  });
   await uploadMarkdown(id, markdownText);
 
   return res;
