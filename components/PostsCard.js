@@ -8,7 +8,6 @@ export default function PostsCard ({ title, description, url, onClick }) {
         <h2 className={styles['title']}>{title} &rarr;</h2>
       </a>
     </Link>
-    <hr />
     {description.split(';').map((item) => (
       <div onClick={() => onClick(String(item).trim())} className={styles['tags']} key={item}>#{String(item).trim()}</div>
     ))}

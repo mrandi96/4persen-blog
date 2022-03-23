@@ -1,6 +1,9 @@
-import styles from 'styles/HomePage.module.css'
+import styles from 'styles/HomePage.module.css';
+import theme from 'styles/Theme.module.css';
 
 import { useState, useRef } from 'react';
+import cookieCutter from 'cookie-cutter';
+import Cookies from 'cookies';
 import Head from 'components/Head';
 import SearchBar from 'components/SearchBar';
 import Footer from 'components/Footer';
@@ -8,18 +11,21 @@ import Quotes from 'components/Quotes';
 import PostsCard from 'components/PostsCard';
 import { getPosts } from './api/posts';
 import { getOneRandomQuote } from './api/quotes';
+import DarkModeToggle from 'components/DarkModeToggle';
 
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
   try {
     const posts = await getPosts(true);
     const quote = await getOneRandomQuote();
+    const cookies = new Cookies(req, res);
+    const isDark = cookies.get('@darkMode') === 'true';
 
     return {
       props: {
         posts,
-        quote
-      },
-      revalidate: 1,
+        quote,
+        isDark,
+      }
     }
   } catch (e) {
     console.error(e);
@@ -32,9 +38,10 @@ export async function getStaticProps() {
   }
 }
 
-export default function HomePage({ posts: initialPosts, quote }) {
+export default function HomePage({ posts: initialPosts, quote, isDark }) {
   const [posts, setPosts] = useState(initialPosts);
   const [showClear, setShowClear] = useState(false);
+  const [darkMode, setDarkMode] = useState(isDark);
   const searchRef = useRef();
   let debounce;
 
@@ -73,8 +80,16 @@ export default function HomePage({ posts: initialPosts, quote }) {
     filterPosts('');
   }
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    cookieCutter.set('@darkMode', !darkMode);
+    if (window !== undefined) {
+      localStorage.setItem('@darkMode', !darkMode);
+    }
+  }
+
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${theme[darkMode ? 'dark' : 'light']}`}>
       <Head />
       <main className={styles.main}>
         <h1 className={styles.title}>
@@ -90,7 +105,9 @@ export default function HomePage({ posts: initialPosts, quote }) {
           }) : <h1>There is nothing here.</h1>}
         </div>
       </main>
-      <Footer />
+      <Footer
+        preComponent={<DarkModeToggle onClick={toggleDarkMode} isDark={darkMode} style={{ marginRight: 10 }} />}
+      />
     </div>
   )
 }

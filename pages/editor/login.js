@@ -1,10 +1,22 @@
 import styles from 'styles/LoginPage.module.css';
+import theme from 'styles/Theme.module.css';
 import icons from 'styles/Icons.module.css';
 
 import { useState } from 'react';
 import cookieCutter from 'cookie-cutter';
+import Cookies from 'cookies';
 
-export default function LoginPage() {
+export async function getServerSideProps({ req, res }) {
+  const cookies = new Cookies(req, res);
+  const isDark = cookies.get('@darkMode') === 'true';
+  return {
+    props: {
+      isDark
+    }
+  }
+}
+
+export default function LoginPage({ isDark }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -41,7 +53,7 @@ export default function LoginPage() {
     }
   }
 
-  return <div className={styles.container}>
+  return <div className={`${styles.container} ${theme[isDark ? 'dark' : 'light']}`}>
     <form className={styles.form} onSubmit={submitFormHandler}>
       <p className={styles['form-title']}>4%</p>
       <div className={styles['input-control']}>

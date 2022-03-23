@@ -1,3 +1,8 @@
+.title {
+  border-bottom: 2px solid currentColor;
+  padding-bottom: 15px;
+}
+
 .card {
   margin: 1rem;
   padding: 1.5rem;
@@ -10,7 +15,6 @@
   transition: color 0.15s ease, border-color 0.15s ease;
 }
 
-.title:hover,
 .card:hover,
 .card:focus,
 .card:active {

@@ -1,0 +1,26 @@
+.container {
+  cursor: pointer;
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark {
+  background-color: #0070F3;;
+}
+
+.light {
+  background-color: #FCE570;
+}
+
+.icon {
+  color: currentColor;
+}
+
+.container:hover {
+  background-color: #777777;
+  color: white;
+}

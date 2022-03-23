@@ -1,4 +1,5 @@
 import styles from 'styles/EditorPage.module.css';
+import theme from 'styles/Theme.module.css';
 import icons from 'styles/Icons.module.css';
 
 import { useState, useEffect } from 'react';
@@ -19,6 +20,8 @@ export async function getServerSideProps({ req, res }) {
     const decodedUriToken = decodeURIComponent(encodedUriToken);
     const token = JSON.parse(decodedUriToken);
 
+    const isDark = cookies.get('@darkMode') === 'true';
+
     const idToken = token?._tokenResponse?.idToken;
 
     const { cred, failed } = await verifyToken(idToken);
@@ -29,7 +32,8 @@ export async function getServerSideProps({ req, res }) {
 
     return {
       props: {
-        cred
+        cred,
+        isDark
       }
     }
   } catch (e) {
@@ -41,7 +45,7 @@ export async function getServerSideProps({ req, res }) {
   }
 }
 
-export default function EditorPage({ cred }) {
+export default function EditorPage({ cred, isDark }) {
   const { data, error } = useSWR('/api/posts', fetcher);
 
   const [documentId, setDocumentId] = useState(null);
@@ -182,7 +186,7 @@ export default function EditorPage({ cred }) {
   const saveIsDisabled = !(title && description && markdownText && isEdited && !showSpinner);
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${theme[isDark ? 'dark' : 'light']}`}>
       <Head title="4Persen Posts Editor" />
       <div className={`${styles['title-list']} ${showList && styles['collapse-list']}`}>
         <Link href="/">
@@ -211,9 +215,9 @@ export default function EditorPage({ cred }) {
       </div>
       <div onClick={toggleListHandler} className={styles['list-toggle']}><span className={styles.ellipsis}>&hellip;</span></div>
       <div className={styles.main}>
-        <input placeholder="Untitled post" className={`${styles['no-border-input']} ${styles['title-input']}`} name="title" onChange={inputTitleHandler} value={title} />
-        <input placeholder="No description" className={`${styles['no-border-input']} ${styles['description-input']}`} name="description" onChange={inputDescriptionHandler} value={description} />
-        <textarea className={styles['markdown-editor']} name="markdownText" onChange={markdownTextHandler} value={markdownText} />
+        <input placeholder="Untitled post" className={`${styles['no-border-input']} ${styles['title-input']} ${theme[isDark ? 'dark' : 'light']}`} name="title" onChange={inputTitleHandler} value={title} />
+        <input placeholder="No description" className={`${styles['no-border-input']} ${styles['description-input']} ${theme[isDark ? 'dark' : 'light']}`} name="description" onChange={inputDescriptionHandler} value={description} />
+        <textarea className={`${styles['markdown-editor']} ${theme[isDark ? 'dark' : 'light']}`} name="markdownText" onChange={markdownTextHandler} value={markdownText} />
         <button
           onClick={() => createOrUpdatePostHandler()}
           disabled={saveIsDisabled}

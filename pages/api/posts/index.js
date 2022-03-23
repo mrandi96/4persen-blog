@@ -1,15 +1,4 @@
 import { admin } from 'utility/firebase';
-// import {
-//   getFirestore,
-//   collection,
-//   getDocs,
-//   query,
-//   orderBy,
-//   addDoc,
-//   setDoc,
-//   Timestamp,
-//   doc
-// } from 'firebase/firestore';
 import { uploadMarkdown } from '../markdowns';
 
 const db = admin.firestore();
